@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sharp-It: A Multi-view to Multi-view Diffusion Model</title>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KBKFF5WPJF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-KBKFF5WPJF');
+  </script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+   /* General Styles */
+/* General Styles */
+body {
+  font-family: 'Google Sans', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+/* Title and Subtitle Styles */
+#sharp-it-intro h1.title.is-1 {
+  margin-bottom: 15px;
+}
+
+#sharp-it-intro h2.subtitle {
+  margin: 0;
+}
+
+#sharp-it-intro .image-container {
+  margin: 0;
+}
+
+.subtitle {
+  color: #000000;
+  margin-top: 0;
+}
+
+h1.title.is-1,
+h2.title.is-3 {
+  text-align: center;
+  margin: 20px 0;
+  color: #363636;
+}
+
+/* Section and Content Styles */
+section {
+  padding: 20px;
+}
+
+p {
+  line-height: 1.6;
+}
+
+/* Link Blocks */
+.publication-links .link-block {
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* Media Container Styles */
+.hero img,
+.video-container img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Carousel Styles */
+.carousel {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 10px 0;
+}
+
+.carousel .item {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+  width: 90%;
+  max-width: 320px;
+  margin: auto;
+}
+
+.carousel .item video,
+.carousel .item img {
+  border-radius: 8px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Preview Results Section */
+.preview-results-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.preview-results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  justify-content: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.preview-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+.preview-item video {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.preview-caption {
+  margin-top: 10px;
+  font-size: 1rem;
+  text-align: center;
+  color: #4a4a4a;
+  background: #f8f9fa;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid #eee;
+}
+
+/* Editing Grid Styles */
+.editing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  justify-content: center;
+}
+
+.edit-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background: #fff;
+}
+
+.edit-item video {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.prompt {
+  margin-top: 10px;
+  font-size: 1rem;
+  text-align: center;
+  color: #4a4a4a;
+  background: #f8f9fa;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid #eee;
+}
+
+/* Editing Block Styles */
+.editing-block {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.editing-block .title.is-4 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: #4a4a4a;
+}
+
+/* Method Section Styles */
+.method-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: left;
+  margin: 20px auto;
+  max-width: 1000px;
+  padding: 20px;
+}
+
+.method-section img {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.method-section ul {
+  list-style: disc;
+  padding: 0 20px;
+  line-height: 1.8;
+}
+
+.method-section li {
+  margin-bottom: 10px;
+}
+
+/* Footer Styles */
+.footer {
+  background: #f8f9fa;
+  text-align: center;
+  padding: 20px;
+}
+
+.footer a {
+  color: #3273dc;
+}
+
+/* Transform Arrow Style */
+.transform-arrow {
+  display: inline-block;
+  margin: 0 5px;
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+  .publication-links .link-block {
+    margin-bottom: 0;
+    display: inline-block;
+  }
+}
+
+@media (max-width: 768px) {
+  h1.title.is-1 {
+    font-size: 1.8rem;
+  }
+
+  h2.title.is-3 {
+    font-size: 1.5rem;
+  }
+
+  .carousel .item {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .editing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .method-section {
+    padding: 10px;
+  }
+
+  .method-section ul {
+    padding: 0 10px;
+  }
+
+  .preview-results-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+  }
+  
+  .preview-item {
+    max-width: 100%;
+  }
+  
+  .preview-item video {
+    max-height: 250px;
+  }
+  
+  .publication-links .link-block {
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .carousel .item {
+    width: 100%;
+  }
+
+  .footer {
+    font-size: 0.9rem;
+  }
+}
+  </style>
+</head>
+
+<body>
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Sharp-It: A Multi-view to Multi-view Diffusion Model for 3D Synthesis and Manipulation</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://www.linkedin.com/in/yiftach-edelstein-b63297100/">Yiftach Edelstein</a><sup>1</sup>&nbsp &nbsp
+            </span>
+
+            <span class="author-block">
+              <a href="https://orpatashnik.github.io/">Or Patashnik</a><sup>2</sup>&nbsp &nbsp
+            </span>
+
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=pP2DcRQAAAAJ&hl=iw">Dana Cohen-Bar</a><sup>2</sup>&nbsp &nbsp
+            </span>
+
+            <span class="author-block">
+              <a href="https://lihi.net.technion.ac.il">Lihi Zelnik-Manor</a><sup>1</sup>&nbsp &nbsp
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>Technion - Israel Institute of Technology</span>
+
+            <span class="author-block"><sup>2</sup>Tel-Aviv University</span> &nbsp &nbsp
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/YiftachEde/Sharp-It"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code - Coming Soon!</span>
+                  </a>
+              </span>
+            </div>
+          </div>
+          <div class="is-size-5 publication-authors">
+          </div>
+        </div>
+      </div>
+    
+      <h2 class="subtitle has-text-centered">
+        Sharp-It is a multi-view-to-multi-view model that enhances low-quality 3D shapes, correcting fine-grained geometric details and adding appearance features. Sharp-It enables various applications such as 3D object synthesis, editing, and controlled generation.
+      </h2>
+
+      <div class="image-container">
+        <img src="static/images/sharpe_teaser_new.png" alt="Sharp-It Teaser" style="width:100%;">
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section hero is-light is-small">
+  <div class="preview-results-container">
+    <div class="preview-results-grid">
+      <div class="preview-item">
+        <video autoplay muted loop playsinline>
+          <source src="static/videos/teasers/rainbow_chair/rainbow_leather.mp4" type="video/mp4">
+        </video>
+        <p class="preview-caption">A rainbow leather chair</p>
+      </div>
+      <div class="preview-item">
+        <video autoplay muted loop playsinline>
+          <source src="static/videos/comparison/tiki_mask/sharp-it.mp4" type="video/mp4">
+        </video>
+        <p class="preview-caption">A wooden tiki mask</p>
+      </div>
+    </div>
+    
+    <div class="content has-text-centered" style="margin-top: 20px;">
+      <p style="line-height: 1.8; font-size: 1.0rem;">
+        Generation results generated through Sharp-E, and Refined using Sharp-It. The prompts are written below each video.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section hero is-small">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p style="line-height: 1.8; font-size: 1.0rem;">
+            Advancements in text-to-image diffusion models have led to significant progress in fast 3D content creation. One common approach is to generate a set of multi-view images of an object, and then reconstruct it into a 3D model. However, this approach bypasses the use of a native 3D representation of the object and is hence prone to geometric artifacts and limited in controllability and manipulation capabilities. An alternative approach involves native 3D generative models that directly produce 3D representations. These models, however, are typically limited in their resolution, resulting in lower quality 3D objects. In this work, we bridge the quality gap between methods that directly generate 3D representations and ones that reconstruct 3D objects from multi-view images. We introduce a multi-view to multi-view diffusion model called Sharp-It, which takes a 3D consistent set of multi-view images rendered from a low-quality object and enriches its geometric details and texture. The diffu-
+
+sion model operates on the multi-view set in parallel, in the sense that it shares features across the generated views. A high-quality 3D model can then be reconstructed from the enriched multi-view set. By leveraging the advantages of both 2D and 3D approaches, our method offers an efficient and controllable method for high-quality 3D content creation. We demonstrate that Sharp-It enables various 3D applications, such as fast synthesis, editing, and controlled generation, while attaining high-quality assets.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section hero is-light is-small">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Geometric Enhancement</h2>
+        <div class="content has-text-justified">
+          <p style="line-height: 1.8; font-size: 1.0rem;">
+            Sharp-It through its training process learns to refine geometric details and fix "floating" errors in the Shap-E representation, refining it into a high-quality 3D object, as can be seen in the dragon below
+          </p>
+          <p style="line-height: 0rem; font-size: 1.0rem; visibility:hidden">
+            By leveraging attention mechanisms, Sharp-It refines corresponding points across multiple views to ensure consistency. For instance, self-attention mechanisms identify relationships between key geometric features, such as aligning wheels across car views, while cross-attention integrates textual guidance for semantic accuracy. These techniques ensure that both fine-grained details and geometric coherence are achieved.
+          </p>
+        </div>
+        <div class="item" style="border: 3px solid #ccc; border-radius: 8px; padding: 5px; margin-top: 20px;">
+          <video autoplay muted loop playsinline style="width: 100%; display: block;">
+            <source src="static/videos/teasers/dragon/dragon_merged.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section hero is-small is-centered">
+  <div class="container is-fluid is-centered has-text-centered">
+
+  <h1 class="title is-3" style="color:black">Appearance Editing</h1>
+  <div class="editing-container">
+    <div class="editing-grid">
+      <div class="edit-item">
+        <video autoplay muted loop playsinline>
+          <source src="static/videos/apperance_edit/jewlery_box/boxes.mp4" type="video/mp4">
+        </video>
+        <p class="prompt">A golden jewelry box<span class="transform-arrow">➜</span> A suede leather jewelry box</p>
+      </div>
+      <div class="edit-item">
+        <video autoplay muted loop playsinline>
+          <source src="static/videos/apperance_edit/leopard_chair/leopard_chairs.mp4" type="video/mp4">
+        </video>
+        <p class="prompt">A leather chair<span class="transform-arrow">➜</span> A leopard print leather chair</p>
+      </div>
+      <div class="edit-item">
+        <video autoplay muted loop playsinline>
+          <source src="static/videos/apperance_edit/wood_tower/towers.mp4" type="video/mp4">
+        </video>
+        <p class="prompt">A glass city tower <span class="transform-arrow">➜</span> A wooden tower</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="section hero is-light is-small">
+  <div class="container is-fluid is-centered has-text-centered">
+    <h2 class="title is-3" >Object Generation</h2>
+    <div id="results-carousel" class="carousel results-carousel">
+      <div class="item">
+        <video autoplay muted loop playsinline>
+          <source src="static/videos/teasers/rainbow_chair/rainbow_75_steps_a_rainbow_minecraft_chair.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <p class="prompt">A rainbow minecraft chair</p>
+      </div>
+      
+      <div class="item">
+        <video autoplay muted loop playsinline>
+          <source src="static/videos/teasers/table/glass_round_gold.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <p class="prompt"><Acr></Acr> glass table with intricate golden legs</p>
+      </div>
+      <div class="item">
+        <video autoplay muted loop playsinline>
+          <source src="static/videos/teasers/rainbow_chair/rainbow_chesterfield_velvet.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <p class="prompt">A rainbow chesterfield velvet chair</p>
+      </div>
+      <div class="item">
+        <video autoplay muted loop playsinline>
+          <source src="static/videos/additional_results/fireplace-sharp-it-correct.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <p class="prompt">A fireplace</p>
+      </div>
+      <div class="item">
+        <video autoplay muted loop playsinline>
+          <source src="static/videos/comp_2/gundam/sharp-it.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <p class="prompt">A gundam</p>
+      </div>
+      <div class="item">
+        <video autoplay muted loop playsinline>
+          <source src="static/videos/comp_2/battle_tank/sharp-it.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <p class="prompt">A battle tank</p>
+      </div>
+      <div class="item">
+        <video autoplay muted loop playsinline>
+          <source src="static/videos/comparison/avocado_couch/sharp-it.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <p class="prompt">An avocado leather couch</p>
+      </div>
+      <div class="item">
+        <video autoplay muted loop playsinline>
+          <source src="static/videos/comparison/bust/sharp_it.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <p class="prompt">A bust of a man with beard and long hair</p>
+      </div>
+      
+    </div>
+    <p class="text_results" style="line-height: 1.8; font-size: 1.2rem;">
+      Scroll for more results. All results shown in this page are videos, and might load slowly.
+    </p>
+
+  </div>
+</section>
+<section class="section hero">
+  <h2 class="title is-3">Object Editing</h2>
+<!-- DDPM Inversion Block -->
+<div class="editing-block">
+  <h3 class="title is-4">Edit Friendly DDPM Inversion</h3>
+  <div class="editing-grid">
+    <div class="edit-item">
+      <video autoplay muted loop playsinline>
+        <source src="static/videos/ddpm_inversion/suvs_comparison.mp4" type="video/mp4">
+      </video>
+      <p class="prompt">A blue beetle car ➜ A blue SUV</p>
+    </div>
+    <div class="edit-item">
+      <video autoplay muted loop playsinline>
+        <source src="static/videos/ddpm_inversion/torquoise_corrected.mp4" type="video/mp4">
+      </video>
+      <p class="prompt">A blue beetle car ➜ A turquoise beetle car</p>
+    </div>
+  </div>
+  <p style="margin-top: 20px; font-size: 1rem; line-height: 1.6; color: #4a4a4a;">
+    <a href="https://inbarhub.github.io/DDPM_inversion/">Edit-Friendly DDPM Inversion</a> enables both reconstruction and diverse editing operations by extracting noise maps from images, and reusing them for the denoising process. This allows for meaningful manipulations while preserving structure, enabling text-based editing without model fine-tuning.
+    </p>
+</div>
+
+<!-- Shap-Editor Block -->
+<div class="editing-block">
+  <h3 class="title is-4">Shap-Editor</h3>
+  <div class="editing-grid">
+    <div class="edit-item">
+      <video autoplay muted loop playsinline >
+        <source src="static/videos/shap-editor/lamps/santa_lamps_comparison.mp4" type="video/mp4">
+      </video>
+      <p class="prompt">A table lamp ➜ A santa table lamp</p>
+    </div>
+    <div class="edit-item">
+      <video autoplay muted loop playsinline>
+        <source src="static/videos/shap-editor/lamps/gold_lamps_comparison.mp4" type="video/mp4">
+      </video>
+      <p class="prompt">A table lamp ➜ A golden table lamp</p>
+    </div>
+  </div>
+  <p style="margin-top: 20px; font-size: 1rem; line-height: 1.6; color: #4a4a4a;">
+    <a href="https://silent-chen.github.io/Shap-Editor/">Shap-Editor</a> is a feed-forward framework for editing 3D assets in Shap-E’s latent space. It provides fast, text-guided edits without optimization.  </p>
+</div>
+
+<section class="section hero is-small is-centered is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">How Sharp-It Works</h2>
+        <div class="image-container">
+          <img src="static/images/method_sharpe.png" style="width:100%;">
+        </div>
+                <div class="content has-text-justified is-centered" style="margin-top: 1.5rem;">
+          <ul class="column is-centered has-text-justified">
+            <li>
+              First, a 3D object is generated with Shap-E. Then, we render six views of this low-quality object. Sharp-It is a diffusion model based on Stable Diffusion that enhances these views with the guidance of a text prompt by refining geometry and adding detailed appearance. Sharp-It employs cross-attention layers for text-based guidance and self-attention layers for cross-view consistency. A high-quality 3D object can be reconstructed from the multi-view image set.
+            </li>
+            <li>
+              Self-attention maps for a query point (red) on the car’s wheel, showing highest attention weights at corresponding wheel locations across different views.
+            </li>
+          </ul>
+        </div>
+        <img src="static/images/cross-view-attention.png" style="width:90%; margin: 0 auto; display: block;">
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const videos = document.querySelectorAll('video');
+    videos.forEach(video => {
+      video.play().catch(function(error) {
+        console.log("Video autoplay failed:", error);
+      });
+    });
+  });
+</script> 
+
+<footer class="footer" style="background-color: #f8f9fa; padding: 2rem 1rem;">
+  <div class="columns is-mobile is-centered">
+    <div class="column has-text-centered">
+      <p>
+        Explore Sharp-It 3D synthesis and editing.<br>
+        <a href="https://github.com/YiftachEde/Sharp-It" target="_blank" style="color: #3273dc;">View Code on GitHub</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    bulmaCarousel.attach('#results-carousel', {
+      slidesToShow: 5, // Default slides visible
+      slidesToScroll: 1,
+      infinite: true,
+      navigation: true,
+      pagination: false,
+      breakpoints: [
+        {
+          changePoint: 768,
+          slidesToShow: 2,
+          slidesToScroll: 1
+        },
+        {
+          changePoint: 1024,
+          slidesToShow: 3,
+          slidesToScroll: 1
+        },
+        {
+          changePoint: 1216,
+          slidesToShow: 4,
+          slidesToScroll: 1
+        },
+        {
+          changePoint: 1408,
+          slidesToShow: 5,
+          slidesToScroll: 1
+        }
+      ]
+    });
+  });
+</script>
+</body>
+</html>
