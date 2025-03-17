@@ -28,6 +28,21 @@ body {
   color: #000000;
 }
 
+.publication-authors a {
+  color: #6C7BF2;  /* Light blue/purple color for author links */
+  text-decoration: none;
+}
+
+.publication-authors a:hover {
+  text-decoration: underline;
+}
+
+.publication-authors strong {
+  color: #444444;  /* Darker gray color for CVPR 2025 */
+  font-weight: 700;  /* Making it bold */
+  font-size: 1.1em;  /* Slightly larger */
+}
+
 /* Title and Subtitle Styles */
 #sharp-it-intro h1.title.is-1 {
   margin-bottom: 15px;
@@ -330,7 +345,10 @@ p {
 
             <span class="author-block"><sup>2</sup>Tel-Aviv University</span> &nbsp &nbsp
           </div>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><strong>CVPR 2025</strong></span>
 
+          </div>
           <div class="column has-text-centered">
             <div class="publication-links">
               <span class="link-block">
@@ -575,7 +593,8 @@ sion model operates on the multi-view set in parallel, in the sense that it shar
     </div>
   </div>
   <p style="margin-top: 20px; font-size: 1rem; line-height: 1.6; color: #4a4a4a;">
-    <a href="https://silent-chen.github.io/Shap-Editor/">Shap-Editor</a> is a feed-forward framework for editing 3D assets in Shap-E’s latent space. It provides fast, text-guided edits without optimization.  </p>
+    <a href="https://silent-chen.github.io/Shap-Editor/">Shap-Editor</a> is a feed-forward framework for editing 3D assets
+    in Shap-E's latent space. It provides fast, text-guided edits without optimization. </p>
 </div>
 
 <section class="section hero is-small is-centered is-light">
@@ -592,7 +611,8 @@ sion model operates on the multi-view set in parallel, in the sense that it shar
               First, a 3D object is generated with Shap-E. Then, we render six views of this low-quality object. Sharp-It is a diffusion model based on Stable Diffusion that enhances these views with the guidance of a text prompt by refining geometry and adding detailed appearance. Sharp-It employs cross-attention layers for text-based guidance and self-attention layers for cross-view consistency. A high-quality 3D object can be reconstructed from the multi-view image set.
             </li>
             <li>
-              Self-attention maps for a query point (red) on the car’s wheel, showing highest attention weights at corresponding wheel locations across different views.
+              Self-attention maps for a query point (red) on the car's wheel, showing highest attention weights at corresponding wheel
+              locations across different views.
             </li>
           </ul>
         </div>
